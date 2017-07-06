@@ -58,6 +58,33 @@
                 android:layout_height="match_parent"
                 android:id="@+id/editTextPassword" />
         </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/linearLayout3"
+            android:paddingTop="20dp">
+            <TextView
+                android:text="Recordarme"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/textView3" />
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/switchRememberme"
+                android:paddingLeft="20dp" />
+        </LinearLayout>
+        <ProgressBar
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:id="@+id/progressBarActivityIndicator"
+            android:indeterminateOnly="true"
+            android:keepScreenOn="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:indeterminate="true" />
         <Button
             android:text="Ingresar"
             android:layout_width="match_parent"
