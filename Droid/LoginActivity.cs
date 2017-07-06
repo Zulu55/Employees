@@ -2,6 +2,7 @@
 {
     using System;
 	using Android.App;
+    using Android.Content;
 	using Android.OS;
 	using Android.Views;
 	using Android.Widget;
@@ -13,6 +14,7 @@
     {
         #region Attributes
         ApiService apiService;
+        DialogService dialogService;
         #endregion
 
         #region Widgets
@@ -37,6 +39,7 @@
 			switchRememberme = FindViewById<Switch>(Resource.Id.switchRememberme);
 
 			apiService = new ApiService();
+            dialogService = new DialogService();
 
             progressBarActivityIndicator.Visibility = ViewStates.Invisible;
 
@@ -47,13 +50,13 @@
         {
             if (string.IsNullOrEmpty(editTextEmail.Text))
             {
-                ShowMessage("Error", "Debes ingresar un email.");
+                dialogService.ShowMessage(this, "Error", "Debes ingresar un email.");
                 return;
             }
 
             if (string.IsNullOrEmpty(editTextPassword.Text))
             {
-                ShowMessage("Error", "Debes ingresar una constraseña.");
+                dialogService.ShowMessage(this, "Error", "Debes ingresar una constraseña.");
                 return;
             }
 
@@ -80,7 +83,7 @@
 			{
                 progressBarActivityIndicator.Visibility = ViewStates.Invisible;
                 buttonLogin.Enabled = true;
-				ShowMessage("Error", "El email o la contraseña es incorrecto.");
+				dialogService.ShowMessage(this, "Error", "El email o la contraseña es incorrecto.");
 				editTextPassword.Text = null;
 				return;
 			}
@@ -89,7 +92,7 @@
 			{
 				progressBarActivityIndicator.Visibility = ViewStates.Invisible;
 				buttonLogin.Enabled = true;
-				ShowMessage("Error", token.ErrorDescription);
+				dialogService.ShowMessage(this, "Error", token.ErrorDescription);
 				editTextPassword.Text = null;
 				return;
 			}
@@ -106,7 +109,7 @@
 			{
 				progressBarActivityIndicator.Visibility = ViewStates.Invisible;
 				buttonLogin.Enabled = true;
-				ShowMessage("Error", "Problema con el usuario, contacte a Pandian.");
+				dialogService.ShowMessage(this, "Error", "Problema con el usuario, contacte a Pandian.");
 				return;
 			}
 
@@ -120,19 +123,14 @@
 			progressBarActivityIndicator.Visibility = ViewStates.Invisible;
 			buttonLogin.Enabled = true;
 
-            ShowMessage("Taran!!", "Hola:" + employee.FullName);
-		}
+            var intent = new Intent(this, typeof(EmployeesActivity));
+			intent.PutExtra("AccessToken", employee.AccessToken);
+			intent.PutExtra("TokenType", employee.TokenType);
+			intent.PutExtra("EmployeeId", employee.EmployeeId);
+			intent.PutExtra("FullName", employee.FullName);
 
-        void ShowMessage(string title, string message)
-        {
-            var builder = new AlertDialog.Builder(this);
-            var alert = builder.Create();
-            alert.SetTitle(title);
-            alert.SetIcon(Resource.Mipmap.Icon);
-            alert.SetMessage(message);
-            alert.SetButton("Aceptar", (s, ev) => { });
-            alert.Show();
-        }
+            StartActivity(intent);
+		}
 		#endregion
     }
 }
