@@ -114,6 +114,11 @@
     <Compile Include="ViewController.designer.cs">
       <DependentUpon>ViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="EmployeeViewController.cs" />
+    <Compile Include="EmployeeViewController.designer.cs">
+      <DependentUpon>EmployeeViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DialogService.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\avatar_user.png" />

@@ -1,7 +1,6 @@
 ﻿namespace Employees.Models
 {
     using System;
-    using Xamarin.Forms;
 
     public class Employee
 	{
@@ -55,7 +54,7 @@
 
 				if (LoginTypeId == 1)
 				{
-					var urlBackend = Application.Current.Resources["URLAPI"].ToString();
+					var urlBackend = "http://tataappapi.azurewebsites.net";
 					return string.Format("{0}/{1}", urlBackend, Picture.Substring(1));
 				}
 

@@ -42,6 +42,9 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Mono.Android" />
+    <Reference Include="UrlImageViewHelper">
+      <HintPath>..\Components\urlimageviewhelper-1.0.4.2\lib\android\UrlImageViewHelper.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Employees\Employees.csproj">
@@ -57,6 +60,7 @@
     <Compile Include="EmployeesActivity.cs" />
     <Compile Include="EmployeesAdapter.cs" />
     <Compile Include="DialogService.cs" />
+    <Compile Include="EmployeeFragment.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -75,6 +79,12 @@
     <AndroidResource Include="Resources\mipmap-hdpi\avatar_user.png" />
     <AndroidResource Include="Resources\layout\Employees.axml" />
     <AndroidResource Include="Resources\layout\EmployeeItem.axml" />
+  </ItemGroup>
+  <ItemGroup>
+    <XamarinComponentReference Include="urlimageviewhelper">
+      <Version>1.0.4.2</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

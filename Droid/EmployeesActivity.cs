@@ -1,6 +1,7 @@
 ﻿namespace Employees.Droid
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Android.App;
 	using Android.Content;
 	using Android.OS;
@@ -57,23 +58,57 @@
         {
 			progressBarActivityIndicator.Visibility = ViewStates.Visible;
 
-            var urlAPI = Resources.GetString(Resource.String.URLAPI);
+            List<Employee> employees = null;
 
-            var response = await apiService.GetList<Employee>(
-				urlAPI,
-				"/api",
-				"/Employees",
-				tokenType,
-				accessToken);
+            var dataEmployees = (EmployeeFragment)this
+                .FragmentManager
+                .FindFragmentByTag("DataEmployees");
 
-			if (!response.IsSuccess)
-			{
-				progressBarActivityIndicator.Visibility = ViewStates.Invisible;
-				dialogService.ShowMessage(this, "Error", response.Message);
-				return;
+            if (dataEmployees == null)
+            {
+                var urlAPI = Resources.GetString(Resource.String.URLAPI);
+
+                var response = await apiService.GetList<Employee>(
+                    urlAPI,
+                    "/api",
+                    "/Employees",
+                    tokenType,
+                    accessToken);
+
+                if (!response.IsSuccess)
+                {
+                    progressBarActivityIndicator.Visibility = ViewStates.Invisible;
+                    dialogService.ShowMessage(this, "Error", response.Message);
+                    return;
+                }
+
+                employees = ((List<Employee>)response.Result)
+                    .OrderBy(e => e.FirstName)
+                    .ThenBy(e => e.LastName)
+                    .ToList();
+
+				dataEmployees = new EmployeeFragment();
+				var fragmentTransaction = this.FragmentManager.BeginTransaction();
+				fragmentTransaction.Add(dataEmployees, "DataEmployees");
+				fragmentTransaction.Commit();
+                dataEmployees.employees = employees;
 			}
+            else
+            {
+                employees = dataEmployees.employees;
+            }
 
-            var employees = (List<Employee>)response.Result;
+            listViewEmployees.Adapter = new EmployeesAdapter(
+                this, 
+                employees, 
+                Resource.Layout.EmployeeItem,
+				Resource.Id.imageFullPicture,
+				Resource.Id.textViewFullName,
+                Resource.Id.textViewEmail,
+                Resource.Id.textViewEmployeeCode,
+                Resource.Id.textViewPhone,
+                Resource.Id.textViewAddress);
+
 			progressBarActivityIndicator.Visibility = ViewStates.Invisible;
 		}
         #endregion
