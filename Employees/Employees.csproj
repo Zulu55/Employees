@@ -38,10 +38,12 @@
     <Compile Include="Models\EmployeeRequest2.cs" />
     <Compile Include="Models\ChangePasswordRequest.cs" />
     <Compile Include="Models\EmployeeRequest.cs" />
+    <Compile Include="Helpers\AsyncHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Services\" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Net.Http.Extensions">

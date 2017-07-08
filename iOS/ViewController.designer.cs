@@ -26,6 +26,10 @@ namespace Employees.iOS
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UILabel labelTitle { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UISwitch switchRememberme { get; set; }
 
         [Outlet]
@@ -50,6 +54,11 @@ namespace Employees.iOS
             if (buttonLogin != null) {
                 buttonLogin.Dispose ();
                 buttonLogin = null;
+            }
+
+            if (labelTitle != null) {
+                labelTitle.Dispose ();
+                labelTitle = null;
             }
 
             if (switchRememberme != null) {

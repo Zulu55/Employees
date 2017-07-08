@@ -1,29 +1,36 @@
 ﻿namespace Employees.iOS
 {
     using System;
-	using Employees.Models;
-	using Employees.Services;
-	using UIKit;
+    using System.IO;
+    using System.Threading.Tasks;
+    using Employees.Helpers;
+    using Employees.Models;
+    using Employees.Services;
+    using Foundation;
+    using Newtonsoft.Json;
+    using UIKit;
 
-	public partial class ViewController : UIViewController
+    public partial class ViewController : UIViewController
     {
 		#region Attributes
 		DialogService dialogService;
 		ApiService apiService;
-		#endregion
-
-		#region Constructor
-		public ViewController(IntPtr handle) : base(handle)
-        {
-            dialogService = new DialogService();
-            apiService = new ApiService();
-        }
+		string urlAPI;
         #endregion
 
         #region Methods
+        public ViewController(IntPtr handle) : base(handle)
+        {
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+			urlAPI = NSBundle.MainBundle.LocalizedString("URLAPI", "URLAPI");
+			
+            dialogService = new DialogService();
+            apiService = new ApiService();
 
             activityIndicator.Hidden = true;
         }
@@ -34,21 +41,30 @@
             // Release any cached data, images, etc that aren't in use.		
         }
 
-        async partial void ButtonLogin_TouchUpInside(UIButton sender)
+        partial void ButtonLogin_TouchUpInside(UIButton sender)
         {
-            if (string.IsNullOrEmpty(textFieldEmail.Text))
+			if (string.IsNullOrEmpty(textFieldEmail.Text))
+			{
+				dialogService.ShowMessage(this, "Error", "Debes ingresar un email.");
+				return;
+			}
+
+			if (string.IsNullOrEmpty(textFieldPassword.Text))
+			{
+				dialogService.ShowMessage(this, "Error", "Debes ingresar una constraseña.");
+				return;
+			}
+
+            var ok = AsyncHelpers.RunSync<bool>(() => Login());
+            if (!ok)
             {
-                dialogService.ShowMessage(this, "Error", "Debes ingresar un email.");
                 return;
             }
+		}
 
-            if (string.IsNullOrEmpty(textFieldPassword.Text))
-            {
-                dialogService.ShowMessage(this, "Error", "Debes ingresar una constraseña.");
-                return;
-            }
-
-            activityIndicator.Hidden = false;
+        async Task<bool> Login()
+        {
+			activityIndicator.Hidden = false;
 			buttonLogin.Enabled = false;
 
 			//var checkConnetion = await apiService.CheckConnection();
@@ -60,20 +76,18 @@
 			//  return;
 			//}
 
-			var urlAPI = "http://tataappapi.azurewebsites.net";
-
 			var token = await apiService.GetToken(
 				urlAPI,
 				textFieldEmail.Text,
-                textFieldPassword.Text);
+				textFieldPassword.Text);
 
 			if (token == null)
 			{
 				activityIndicator.Hidden = true;
 				buttonLogin.Enabled = true;
 				dialogService.ShowMessage(this, "Error", "El email o la contraseña es incorrecto.");
-                textFieldPassword.Text = null;
-				return;
+				textFieldPassword.Text = null;
+                return false;
 			}
 
 			if (string.IsNullOrEmpty(token.AccessToken))
@@ -82,7 +96,7 @@
 				buttonLogin.Enabled = true;
 				dialogService.ShowMessage(this, "Error", token.ErrorDescription);
 				textFieldPassword.Text = null;
-				return;
+				return false;
 			}
 
 			var response = await apiService.GetEmployeeByEmailOrCode(
@@ -98,7 +112,7 @@
 				activityIndicator.Hidden = true;
 				buttonLogin.Enabled = true;
 				dialogService.ShowMessage(this, "Error", "Problema con el usuario, contacte a Pandian.");
-				return;
+				return false;
 			}
 
 			var employee = (Employee)response.Result;
@@ -108,10 +122,15 @@
 			employee.TokenExpires = token.Expires;
 			employee.TokenType = token.TokenType;
 
+            var documents = Environment.GetFolderPath(
+                Environment.SpecialFolder.MyDocuments);
+			var fileName = Path.Combine(documents, "Employees.txt");
+			var employeeJson = JsonConvert.SerializeObject(employee);
+			File.WriteAllText(fileName, employeeJson);
+
 			activityIndicator.Hidden = true;
 			buttonLogin.Enabled = true;
-
-            dialogService.ShowMessage(this, "Taran!!!", "Hola: " + employee.FullName);
+            return true;
 		}
         #endregion
     }
