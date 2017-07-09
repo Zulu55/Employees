@@ -13,16 +13,23 @@ namespace Employees.iOS
 	public partial class EmployessViewController : UIViewController
     {
         #region Attributes
-        Employee employee;
 		ApiService apiService;
         DialogService dialogService;
 		string urlAPI;
         List<Employee> employees;
 		List<string> employeesNames;
-		#endregion
+        #endregion
 
-		#region Constructor
-		public EmployessViewController(IntPtr handle) : base(handle)
+        #region Properties
+        public Employee Employee
+        {
+            get;
+            set;
+        }
+        #endregion
+
+        #region Constructor
+        public EmployessViewController(IntPtr handle) : base(handle)
         {
         }
         #endregion
@@ -35,15 +42,15 @@ namespace Employees.iOS
             apiService = new ApiService();
             dialogService = new DialogService();
 
-            var documents = Environment.GetFolderPath(
-                 Environment.SpecialFolder.MyDocuments);
-            var fileName = Path.Combine(documents, "Employees.txt");
-            var employeeJson = File.ReadAllText(fileName);
-            employee = JsonConvert.DeserializeObject<Employee>(employeeJson);
+            //var documents = Environment.GetFolderPath(
+            //     Environment.SpecialFolder.MyDocuments);
+            //var fileName = Path.Combine(documents, "Employees.txt");
+            //var employeeJson = File.ReadAllText(fileName);
+            //employee = JsonConvert.DeserializeObject<Employee>(employeeJson);
 
 			urlAPI = NSBundle.MainBundle.LocalizedString("URLAPI", "URLAPI");
 
-			labelFullName.Text = employee.FullName;
+			labelFullName.Text = Employee.FullName;
 
             LoadEmployees();
         }
@@ -54,8 +61,8 @@ namespace Employees.iOS
 				urlAPI,
 				"/api",
 				"/Employees",
-                employee.TokenType,
-				employee.AccessToken);
+                Employee.TokenType,
+				Employee.AccessToken);
 
 			if (!response.IsSuccess)
 			{
@@ -78,7 +85,7 @@ namespace Employees.iOS
             tableEmployees.Source = new EmployessSource(
                 employeesNames.ToArray(), 
                 this);
-
+            tableEmployees.ReloadData();
             activityIndicator.Hidden = true;
 		}
         #endregion

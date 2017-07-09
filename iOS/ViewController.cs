@@ -16,6 +16,7 @@
 		DialogService dialogService;
 		ApiService apiService;
 		string urlAPI;
+        Employee employee;
         #endregion
 
         #region Methods
@@ -115,23 +116,29 @@
 				return false;
 			}
 
-			var employee = (Employee)response.Result;
+			employee = (Employee)response.Result;
 			employee.AccessToken = token.AccessToken;
 			employee.IsRemembered = switchRememberme.On;
 			employee.Password = textFieldPassword.Text;
 			employee.TokenExpires = token.Expires;
 			employee.TokenType = token.TokenType;
 
-            var documents = Environment.GetFolderPath(
-                Environment.SpecialFolder.MyDocuments);
-			var fileName = Path.Combine(documents, "Employees.txt");
-			var employeeJson = JsonConvert.SerializeObject(employee);
-			File.WriteAllText(fileName, employeeJson);
+            //var documents = Environment.GetFolderPath(
+            //    Environment.SpecialFolder.MyDocuments);
+            //var fileName = Path.Combine(documents, "Employees.txt");
+            //var employeeJson = JsonConvert.SerializeObject(employee);
+            //File.WriteAllText(fileName, employeeJson);
 
 			activityIndicator.Hidden = true;
 			buttonLogin.Enabled = true;
             return true;
 		}
+
+        public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
+        {
+            var dest = segue.DestinationViewController as EmployessViewController;
+            dest.Employee = employee;        
+        }
         #endregion
     }
 }
